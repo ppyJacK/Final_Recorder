@@ -86,6 +86,7 @@ public class RecordService extends Service {
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mediaRecorder.setAudioChannels(1);
         if(MySharedPreferences.getPrefHighQuality(this)){
+            //set the sharpness
             mediaRecorder.setAudioSamplingRate(44100);
             mediaRecorder.setVideoEncodingBitRate(192000);
         }
