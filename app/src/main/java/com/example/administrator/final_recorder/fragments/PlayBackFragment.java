@@ -9,6 +9,7 @@ import android.graphics.LightingColorFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -65,7 +66,7 @@ public class PlayBackFragment extends DialogFragment {
 
         long itemDuration = item.getLength();
         minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration);
-        seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(itemDuration);
+        seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes);
     }
 
     @Override
@@ -73,6 +74,7 @@ public class PlayBackFragment extends DialogFragment {
         super.onActivityCreated(savedInstance);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstance){
         Dialog dialog = super.onCreateDialog(savedInstance);
@@ -88,6 +90,7 @@ public class PlayBackFragment extends DialogFragment {
         ColorFilter filter = new LightingColorFilter(getResources().getColor(R.color.colorPrimary),getResources().getColor(R.color.colorPrimary));
         mSeekBar.getProgressDrawable().setColorFilter(filter);
 
+
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -97,7 +100,7 @@ public class PlayBackFragment extends DialogFragment {
 
                     long minutes = TimeUnit.MILLISECONDS.toMinutes(mMediaPlayer.getCurrentPosition());
                     long seconds = TimeUnit.MILLISECONDS.toSeconds(mMediaPlayer.getCurrentPosition())
-                                    - TimeUnit.MINUTES.toSeconds(mMediaPlayer.getCurrentPosition());
+                                    - TimeUnit.MINUTES.toSeconds(minutes);
                     mCurProgress.setText(String.format("%02d:%02d",minutes,seconds));
 
                     updateSeekBar();
@@ -125,7 +128,7 @@ public class PlayBackFragment extends DialogFragment {
                     long minutes = TimeUnit.MILLISECONDS.toMinutes(mMediaPlayer.getCurrentPosition());
                     long seconds = TimeUnit.MILLISECONDS.toSeconds(mMediaPlayer.getCurrentPosition())
                             - TimeUnit.MINUTES.toSeconds(minutes);
-                    mCurProgress.setText(String.format("%02d:02d",minutes,seconds));
+                    mCurProgress.setText(String.format("%02d:%02d",minutes,seconds));
                     updateSeekBar();
                 }
 
@@ -142,7 +145,7 @@ public class PlayBackFragment extends DialogFragment {
         });
 
         mFileName.setText(item.getName());
-        mFileLength.setText(String.format("%02d:02d",minutes,seconds));
+        mFileLength.setText(String.format("%02d:%02d",minutes,seconds));
 
         builder.setView(view);
 
@@ -186,7 +189,9 @@ public class PlayBackFragment extends DialogFragment {
         if(!isPlaying){
             if(mMediaPlayer == null)
                 startPlaying();
+            else resumePlaying();
         }
+        else pausePlaying();
     }
 
     private void startPlaying(){
@@ -250,7 +255,7 @@ public class PlayBackFragment extends DialogFragment {
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-
+                    stopPlaying();
                 }
             });
 
@@ -261,20 +266,13 @@ public class PlayBackFragment extends DialogFragment {
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    private void stopPlaying(){
+    private void pausePlaying(){
         mPlayBtn.setImageResource(R.drawable.ic_media_play);
         mHandler.removeCallbacks(mRunnable);
         mMediaPlayer.pause();
     }
 
-    private void resumePlaying(){
-        mPlayBtn.setImageResource(R.drawable.ic_pause_button);
-        mHandler.removeCallbacks(mRunnable);
-        mMediaPlayer.start();
-        updateSeekBar();
-    }
-
-    private void finishPlaying(){
+    private void stopPlaying(){
         mPlayBtn.setImageResource(R.drawable.ic_media_play);
         mHandler.removeCallbacks(mRunnable);
         mMediaPlayer.stop();
@@ -291,19 +289,29 @@ public class PlayBackFragment extends DialogFragment {
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
+    private void resumePlaying(){
+        mPlayBtn.setImageResource(R.drawable.ic_pause_button);
+        mHandler.removeCallbacks(mRunnable);
+        mMediaPlayer.start();
+        updateSeekBar();
+    }
+
+
     //update seekbar
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            int mCurPos = mMediaPlayer.getCurrentPosition();
-            mSeekBar.setProgress(mCurPos);
+            if(mMediaPlayer != null){
+                int mCurPos = mMediaPlayer.getCurrentPosition();
+                mSeekBar.setProgress(mCurPos);
 
-            long minutes = TimeUnit.MILLISECONDS.toMinutes(mCurPos);
-            long seconds = TimeUnit.MILLISECONDS.toSeconds(mCurPos) - TimeUnit.MINUTES.toSeconds(minutes);
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(mCurPos);
+                long seconds = TimeUnit.MILLISECONDS.toSeconds(mCurPos) - TimeUnit.MINUTES.toSeconds(minutes);
 
-            mCurProgress.setText(String.format("%02d:%02d",minutes,seconds));
+                mCurProgress.setText(String.format("%02d:%02d",minutes,seconds));
 
-            updateSeekBar();
+                updateSeekBar();
+            }
         }
     };
 
