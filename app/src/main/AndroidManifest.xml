@@ -22,7 +22,9 @@
         <activity
             android:name=".SettingActivity"
             android:label="Setting"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity">
+        </activity>
+
 
         <service
             android:name=".service.RecordService"

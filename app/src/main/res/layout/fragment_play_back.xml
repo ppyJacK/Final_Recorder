@@ -61,9 +61,6 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:src="@drawable/ic_media_play"
-                    app:fab_colorNormal="@color/primary"
-                    app:fab_colorPressed="@color/primary"
-                    app:fab_shadow="false"
                     app:maxImageSize="48dp"
                     card_view:backgroundTint="@color/colorPrimary" />
 

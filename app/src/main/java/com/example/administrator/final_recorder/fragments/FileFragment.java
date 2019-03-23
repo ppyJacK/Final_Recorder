@@ -78,7 +78,7 @@ public class FileFragment extends Fragment {
                 // a file be deleted
                 String filePath = android.os.Environment.getExternalStorageDirectory().toString()+"/Final_recorder"+file+"]";
 
-                Log.d(LOG_TAG,"File deleted ["+filePath);
+                Log.d(LOG_TAG,"File deleted ["+android.os.Environment.getExternalStorageDirectory().toString()+"/Final_recorder"+file+"]");
 
                 //remove file from database and recycle view
                 mFileViewerAdapter.removeOutOfApp(filePath);

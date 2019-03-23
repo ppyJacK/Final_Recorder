@@ -128,7 +128,7 @@ public class RecordService extends Service {
             count++;
             mFileName = "My Recording"+"_"+(dbHelper.getCount()+count)+".mp4";
             mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-            mFilePath += "/final_recorder/"+mFileName;
+            mFilePath += "/Final_recorder/"+mFileName;
             f = new File(mFilePath);
         }while (f.exists() && !f.isDirectory());
     }

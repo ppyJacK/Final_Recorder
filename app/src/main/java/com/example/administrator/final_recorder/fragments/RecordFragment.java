@@ -1,13 +1,16 @@
 package com.example.administrator.final_recorder.fragments;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.tv.TvInputService;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +33,11 @@ public class RecordFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private static final String LOG_TAG = RecordFragment.class.getSimpleName();
 
-    //录音部件
+    private int position;
+
+    //Recording tools
     private FloatingActionButton mRecordbtn = null;
+
     private TextView mRecording_status;
     private FloatingActionButton mBtnPause = null;
 
@@ -41,6 +47,8 @@ public class RecordFragment extends Fragment {
     private Chronometer mChronometer = null;
     private int mRecordPromptCount = 0;
     long timeWhenPaused = 0;
+
+    public static final int RECORD_AUDIO = 0;
 
     public static RecordFragment newInstance(int position){
         RecordFragment f = new RecordFragment();
@@ -54,6 +62,12 @@ public class RecordFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstance){
+        super.onCreate(savedInstance);
+        position = getArguments().getInt(ARG_POSITION);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,8 +75,8 @@ public class RecordFragment extends Fragment {
         // Inflate the layout for this fragment
         View recordView =  inflater.inflate(R.layout.fragment_record, container, false);
 
-        mChronometer = (Chronometer) recordView.findViewById(R.id.chronometer);
-        mRecording_status = (TextView)recordView.findViewById(R.id.recording_status);
+        mChronometer = recordView.findViewById(R.id.chronometer);
+        mRecording_status = recordView.findViewById(R.id.recording_status);
 
         mBtnPause = recordView.findViewById(R.id.btnPause);
         mRecordbtn = recordView.findViewById(R.id.recordbtn);
@@ -70,11 +84,18 @@ public class RecordFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 onRecord(if_record);
-                if_record =! if_record;
+                if_record = !if_record;
             }
         });
 
         mBtnPause.hide();
+        mBtnPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPause(if_pause);
+                if_pause = !if_pause;
+            }
+        });
 
         return recordView;
     }
@@ -83,10 +104,12 @@ public class RecordFragment extends Fragment {
         //initiate recording service intent
         Intent intent = new Intent(getActivity(),RecordService.class);
 
-        if(start){
+        if(ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},RECORD_AUDIO);
+        } if(start){
             mRecordbtn.setImageResource(R.drawable.ic_finish_button);
             Toast.makeText(getActivity(),"Recording start...",Toast.LENGTH_LONG).show();
-            File folder = new File(Environment.getExternalStorageDirectory()+"/final_recorder");
+            File folder = new File(Environment.getExternalStorageDirectory()+"/Final_recorder");
             if(!folder.exists()){
                 folder.mkdir();
             }
