@@ -34,7 +34,7 @@
         android:text="Please enter your email:" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/emailText"
         android:layout_width="276dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/email"

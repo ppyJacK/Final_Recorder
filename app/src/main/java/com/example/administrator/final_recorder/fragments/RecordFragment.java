@@ -60,6 +60,7 @@ public class RecordFragment extends Fragment {
     private Map<Integer,Runnable> disallowablePermission = new HashMap<>();
 
     private boolean permission_sdcard = false;
+    private boolean permission_record = false;
 
     public static RecordFragment newInstance(int position){
         RecordFragment f = new RecordFragment();
@@ -95,11 +96,11 @@ public class RecordFragment extends Fragment {
         mRecordbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestPermission(1, Manifest.permission.RECORD_AUDIO, new Runnable() {
+                requestPermission(2, Manifest.permission.WRITE_EXTERNAL_STORAGE, new Runnable() {
                     @Override
                     public void run() {
-                        onRecord(if_record);
-                        if_record = !if_record;
+                        permission_sdcard = true;
+                        return;
                     }
                 }, new Runnable() {
                     @Override
@@ -108,10 +109,13 @@ public class RecordFragment extends Fragment {
                     }
                 });
 
-                requestPermission(2, Manifest.permission.WRITE_EXTERNAL_STORAGE, new Runnable() {
+                requestPermission(1, Manifest.permission.RECORD_AUDIO, new Runnable() {
                     @Override
                     public void run() {
-                        permission_sdcard = true;
+                        onRecord(if_record);
+                        if_record = !if_record;
+                        permission_record = true;
+                        return;
                     }
                 }, new Runnable() {
                     @Override
@@ -143,9 +147,9 @@ public class RecordFragment extends Fragment {
 //        if(ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
 //            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},RECORD_AUDIO);
 //        }
-        if(start){
+        if(start && permission_record && permission_sdcard){
             mRecordbtn.setImageResource(R.drawable.ic_finish_button);
-            Toast.makeText(getActivity(),"Recording start...",Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(),"Recording start...",Toast.LENGTH_LONG).show();
             File folder = new File(Environment.getExternalStorageDirectory()+"/Final_recorder");
             if(!folder.exists()){
                 folder.mkdir();
