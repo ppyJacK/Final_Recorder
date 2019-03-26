@@ -42,9 +42,7 @@ public class FileFragment extends Fragment {
         fileObserver.startWatching();
     }
 
-    public FileFragment() {
-        // Required empty public constructor
-    }
+
 
 
     @Override

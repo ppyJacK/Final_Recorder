@@ -187,8 +187,8 @@ public class RecordService extends Service {
         File f = new File(mFilePath);
         Uri i = FileProvider.getUriForFile(getApplicationContext(),"com.example.administrator.final_recorder.provide",f);
         Iemail.setType("video/mp4");
-        String title = "Title";
-        String context = "Context";
+        String title = "New Audio";
+        String context = "An Audio from your RecordingMail app"+"\n"+"Name:"+mFileName;
 
         EmailReciver = preferences.getString("email",null);
         String[] reciver = new String[1];
