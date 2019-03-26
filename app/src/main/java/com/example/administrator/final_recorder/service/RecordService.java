@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Date;
 
 import com.example.administrator.final_recorder.R;
 import com.example.administrator.final_recorder.DBHelper;
@@ -144,9 +145,12 @@ public class RecordService extends Service {
     public void setFileNameAndPath(){
         int count = 0;
         File f;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMddHHmmss");
+        Date date = new Date(System.currentTimeMillis());
         do{
             count++;
-            mFileName = "MyRecording"+"_"+(dbHelper.getCount()+count)+".mp4";
+            //mFileName = "MyRecording"+"_"+(dbHelper.getCount()+count)+".mp4";
+            mFileName = "MyRecording"+"_"+simpleDateFormat.format(date)+".mp4";
             mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
             mFilePath += "/Final_recorder/"+mFileName;
             f = new File(mFilePath);
