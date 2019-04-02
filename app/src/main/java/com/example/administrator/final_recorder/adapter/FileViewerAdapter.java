@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.text.format.DateUtils;
 import com.example.administrator.final_recorder.DBHelper;
 import com.example.administrator.final_recorder.R;
 import com.example.administrator.final_recorder.RecordingItem;
+import com.example.administrator.final_recorder.fragments.FileFragment;
 import com.example.administrator.final_recorder.fragments.PlayBackFragment;
 import com.example.administrator.final_recorder.listener.DatabaseChangedListener;
 
@@ -232,8 +234,12 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
     public void shareFileDialog(int position) {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(getItem(position).getFilePath())));
+        File f = new File(getItem(position).getFilePath());
+        Uri i = FileProvider.getUriForFile(mContext,"com.example.administrator.final_recorder.provide",f);
+        shareIntent.setType("video/mp4");
+        //shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(getItem(position).getFilePath())));
         shareIntent.setType("audio/mp4");
+        shareIntent.putExtra(Intent.EXTRA_STREAM,i);
         mContext.startActivity(Intent.createChooser(shareIntent, mContext.getText(R.string.send_to)));
     }
 

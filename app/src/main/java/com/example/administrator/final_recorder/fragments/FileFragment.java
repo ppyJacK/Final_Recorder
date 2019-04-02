@@ -81,6 +81,7 @@ public class FileFragment extends Fragment {
                 //remove file from database and recycle view
                 mFileViewerAdapter.removeOutOfApp(filePath);
             }
+            //if(event == FileObserver)
 
         }
     };
