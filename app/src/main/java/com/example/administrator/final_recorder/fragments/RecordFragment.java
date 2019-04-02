@@ -186,6 +186,8 @@ public class RecordFragment extends Fragment {
                     mRecordPromptCount ++;
                 }
             });
+            mBtnPause.setImageResource(R.drawable.ic_pause_button);
+            if_pause = true;
             mBtnPause.show();
 
             // start recording service
@@ -205,8 +207,6 @@ public class RecordFragment extends Fragment {
                 timeWhenPaused = 0;
                 mRecording_status.setText("Click the button to start");
                 mBtnPause.hide();
-                mBtnPause.setImageResource(R.drawable.ic_pause_button);
-                if_pause = true;
                 getActivity().stopService(intent);
                 //allow the screen to turn off again once recording is finished
                 getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -216,14 +216,22 @@ public class RecordFragment extends Fragment {
 
 
     private void onPause(boolean pause){
+        Log.d("topause",String.valueOf(pause));
         if(pause){
             //pause recording
+            //Log.d("ifset","not yet");
             mBtnPause.setImageResource(R.drawable.ic_resume_button);
+            //must hide and show again,or it will miss the image
+            mBtnPause.hide();
+            mBtnPause.show();
+            //Log.d("ifset","set");
             timeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
             mChronometer.stop();
         }else{
             //resume recording
             mBtnPause.setImageResource(R.drawable.ic_pause_button);
+            mBtnPause.hide();
+            mBtnPause.show();
             mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenPaused);
             mChronometer.start();
         }
